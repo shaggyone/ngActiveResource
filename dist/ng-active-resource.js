@@ -1691,10 +1691,18 @@ angular.module('ActiveResource').provider('ARBase', function () {
           // into the appropriate class, and return the found collection
           return GET(_this, url, terms, options).then(function (json) {
             var results = [];
-            for (var i in json) {
-              var instance = _this.new(json[i]);
-              results.push(instance);
-              serializer.deserialize(json[i], instance, options);
+            if (angular.isArray(json)) {
+              for (var i; i < json.length; i++) {
+                var instance = _this.new(json[i]);
+                results.push(instance);
+                serializer.deserialize(json[i], instance, options);
+              }
+            } else {
+              for (var i in json) {
+                var instance = _this.new(json[i]);
+                results.push(instance);
+                serializer.deserialize(json[i], instance, options);
+              }
             }
             // Watch all collections that get assigned out as variables
             _this.watchedCollections.push(results);
